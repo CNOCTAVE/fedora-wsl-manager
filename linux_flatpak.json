@@ -1,0 +1,46 @@
+{
+    "appId": "cn.cnoctave.fedora-wsl-manager",
+    "productName": "fedora-wsl-manager",
+    "buildNumber": "2.2.0",
+    "icon": "logo.png",
+    "directories": {
+        "output": "dist"
+    },
+    "publish": [
+        {
+        "provider": "github",
+        "owner": "CNOCTAVE",
+        "repo": "fedora-wsl-manager",
+        "releaseType": "release"
+        }
+    ],
+    "linux": {
+        "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+        "target": [
+            {
+                "target": "flatpak",
+                "arch": [
+                    "x64",
+                    "armv7l",
+                    "arm64"
+                ],
+                "options": {
+                  "bundle": "your-app-id",
+                  "runtime": "org.freedesktop.Platform/x86_64/20.08",
+                  "sdk": "org.freedesktop.Sdk/x86_64/20.08",
+                  "metadata": {
+                    "name": "fedora-wsl-manager",
+                    "description": "fedora-wsl-manager is an open source Fedora WSL manager packed by Electron",
+                    "version": "3.0.0",
+                    "com.github.app.url": "http://cnoctave.cn",
+                    "com.github.app.license": "AGPL-3.0-only"
+                  },
+                  "finishArgs": [
+                    "--socket=x11",
+                    "--share=network"
+                  ]
+                }
+            }
+        ]
+    }
+}

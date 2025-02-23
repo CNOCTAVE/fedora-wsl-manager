@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+Copyright 2024 Yu Hongbo <yuhongbo@member.fsf.org>, 
+  CNOCTAVE <cnoctave@qq.com>
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.  This file is offered as-is,
+without any warranty.
+-->
+
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
+    <meta name="theme-color" content="#00B4FF">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="msapplication-TileImage" content="favicon.ico">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="apple-mobile-web-app-title" content="fedora-wsl-manager文档">
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" rel="stylesheet" type="text/css">
+    <link href="https://use.fontawesome.com/releases/v6.1.1/css/all.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@^4.0.0/animate.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.17.0/dist/quasar.prod.css" rel="stylesheet" type="text/css">
+    <link href="assets/main.css" rel="stylesheet" type="text/css">
+    <title>fedora-wsl-manager文档</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <meta name="title" content="fedora-wsl-manager文档" data-qmeta="title">
+    <meta property="og:title" content="fedora-wsl-manager文档" data-qmeta="ogTitle">
+    <meta name="twitter:title" content="fedora-wsl-manager文档" data-qmeta="twitterTitle">
+    <meta name="description" content="Octave中文网是一个面向中文Octave开发者的交流平台，拥有中文Octave文档、中文Octave论坛和中文Octave新闻等特色。"
+        data-qmeta="description">
+    <meta property="og:description" content="Octave中文网是一个面向中文Octave开发者的交流平台，拥有中文Octave文档、中文Octave论坛和中文Octave新闻等特色。"
+        data-qmeta="ogDesc">
+    <meta name="twitter:description" content="Octave中文网是一个面向中文Octave开发者的交流平台，拥有中文Octave文档、中文Octave论坛和中文Octave新闻等特色。"
+        data-qmeta="twitterDesc">
+</head>
+
+<body>
+    <div id="q-app">
+        <q-layout view="hHh LpR fFf">
+            <q-header elevated class="bg-primary text-white">
+                <q-toolbar class="bg-primary text-white q-ny-md shadow-2">
+                    <q-btn stretch flat label="Octave中文网" @click="goTo('http://cnoctave.cn')"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat label="fedora-wsl-manager文档" @click="scrollToTop()"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-space></q-space>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn-dropdown stretch flat icon="translate" label="切换文档语言">
+                        <q-list>
+                            <q-item clickable v-close-popup @click="goTo('index.html')">
+                                <q-item-section>
+                                    <q-item-label>zh-CN 简体中文</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat label="中文版Octave文档" @click="goTo('http://docs.cnoctave.cn')"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat label="学术交流论坛" @click="goTo('http://forum.cnoctave.cn')"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat label="新闻" @click="goTo('https://octave.org/news.html')"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat label="使用方法" @click="goTo('https://wiki.octave.org/Using_Octave')"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat label="免费下载" @click="goTo('https://octave.org/download')"></q-btn>
+                </q-toolbar>
+            </q-header>
+            <q-drawer class="bg-primary" show-if-above v-model="leftDrawerOpen" side="left" bordered elevated>
+                <q-list class="title1 text-white bg-primary">
+                    <q-item clickable v-ripple @click="goToID('#homepage')">
+                        <q-item-section avatar>
+                            <q-icon name="help" />
+                        </q-item-section>
+                        <q-item-section>
+                            项目首页
+                        </q-item-section>
+                    </q-item>
+                    <q-item clickable v-ripple @click="goToID('#repo_install')">
+                        <q-item-section avatar>
+                            <q-icon name="help" />
+                        </q-item-section>
+                        <q-item-section>
+                            软件源安装
+                        </q-item-section>
+                    </q-item>
+                    <q-item clickable v-ripple @click="goToID('#how_to_use')">
+                        <q-item-section avatar>
+                            <q-icon name="help" />
+                        </q-item-section>
+                        <q-item-section>
+                            如何使用
+                        </q-item-section>
+                    </q-item>
+                    <q-item clickable v-ripple @click="goToID('#development_environment')">
+                        <q-item-section avatar>
+                            <q-icon name="help" />
+                        </q-item-section>
+                        <q-item-section>
+                            开发环境
+                        </q-item-section>
+                    </q-item>
+                    <q-item clickable v-ripple @click="goToID('#dependencies')">
+                        <q-item-section avatar>
+                            <q-icon name="help" />
+                        </q-item-section>
+                        <q-item-section>
+                            依赖库
+                        </q-item-section>
+                    </q-item>
+                    <q-item clickable v-ripple @click="goToID('#references')">
+                        <q-item-section avatar>
+                            <q-icon name="help" />
+                        </q-item-section>
+                        <q-item-section>
+                            引用fedora-wsl-manager
+                        </q-item-section>
+                    </q-item>
+                </q-list>
+            </q-drawer>
+
+            <q-page-container>
+                <div style="position: relative;">
+                    <q-img src="pic/banner0.png" spinner-color="white" style="width: 100%; height: 300px;"></q-img>
+                    <div class="q-mx-md rainbow-text"
+                        style="line-height: 300px; font-size: 100px; position: absolute; left: 0%; top: 0%;">
+                        fedora-wsl-manager文档
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="main">
+                        <div class="text-h5 q-ma-md text-red-10">欢迎广大开发者将此文档翻译为其他语言。</div>
+                        <q-btn id="homepage" class="title1 text-white bg-primary" stretch flat
+                            label="项目首页：https://github.com/CNOCTAVE/fedora-wsl-manager"
+                            @click="goTo('https://github.com/CNOCTAVE/fedora-wsl-manager')"></q-btn>
+                        <q-separator></q-separator>
+                        <div id="repo_install" class="title1 q-ma-md text-primary">软件源安装</div>
+                        <p class="q-ma-md">fedora-wsl-manager可以通过NPM软件源安装。</p>
+                        <div class="text-h5 q-ma-md text-red-10">通过NPM软件源安装fedora-wsl-manager，代码如下：</div>
+                        <p class="q-ma-md">$ npm i fedora-wsl-manager</p>
+                        <p class="q-ma-md">fedora-wsl-manager可以通过Snap软件源安装。</p>
+                        <div class="text-h5 q-ma-md text-red-10">通过Snap软件源安装fedora-wsl-manager，代码如下：</div>
+                        <p class="q-ma-md">$ sudo snap install fedora-wsl-manager --edge</p>
+                        <q-separator></q-separator>
+                        <div id="how_to_use" class="title1 q-ma-md text-primary">如何使用</div>
+                        <div class="text-h5 q-ma-md text-red-10">点击左上角的按钮即可打开导航菜单，如图所示：</div>
+                        <q-img src="pic/open_menu.png" spinner-color="white" style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">“已安装的WSL”界面用于展示本机已安装的WSL，如图所示：</div>
+                        <p class="q-ma-md">“创建桌面快捷方式”按钮用于向桌面发送一个脚本，运行此脚本可以直接打开对应的WSL实例</p>
+                        <p class="q-ma-md">“升级到WSL2”按钮用于将WSL1的实例升级到WSL2</p>
+                        <p class="q-ma-md">“降级到WSL1”按钮用于将WSL2的实例降级到WSL1</p>
+                        <p class="q-ma-md">“删除”按钮用于删除对应的WSL实例</p>
+                        <p class="q-ma-md">“刷新”按钮用于刷新列表</p>
+                        <q-img src="pic/installed_wsl.png" spinner-color="white"
+                            style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">“可用的Fedora WSL版本”界面用于展示可在线安装的Fedora WSL镜像列表，如图所示：</div>
+                        <p class="q-ma-md">“安装”按钮用于在线安装Fedora WSL镜像</p>
+                        <p class="q-ma-md">“下载但不安装”按钮用于下载Fedora WSL镜像</p>
+                        <p class="q-ma-md">“刷新”按钮用于刷新列表</p>
+                        <q-img src="pic/avaliable_fedora_wsl.png" spinner-color="white"
+                            style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">在线安装Fedora WSL镜像需要填写WSL实例名称，需要选择WSL镜像下载文件夹和WSL实例安装文件夹，如图所示：</div>
+                        <q-img src="pic/online_install.png" spinner-color="white"
+                            style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">下载Fedora WSL镜像需要选择WSL镜像下载文件夹，如图所示：</div>
+                        <q-img src="pic/download_wsl.png" spinner-color="white"
+                            style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">“手动安装WSL”界面用于安装本地WSL镜像，如图所示：</div>
+                        <p class="q-ma-md">在手动安装WSL时，需要填写WSL实例名称，需要选择WSL实例安装文件夹和WSL镜像文件</p>
+                        <q-img src="pic/manual_install.png" spinner-color="white"
+                            style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">“常用WSL命令”界面用于展示常用WSL命令，如图所示：</div>
+                        <p class="q-ma-md">常用WSL命令包括：</p>
+                        <p class="q-ma-md">在线安装默认的Ubuntu WSL</p>
+                        <p class="q-ma-md">列出可在线安装的WSL Linux发行版</p>
+                        <p class="q-ma-md">列出全部WSL实例</p>
+                        <p class="q-ma-md">将WSL实例版本设置为WSL 1</p>
+                        <p class="q-ma-md">将WSL实例版本设置为WSL 2</p>
+                        <p class="q-ma-md">设置默认WSL版本为WSL 1</p>
+                        <p class="q-ma-md">设置默认WSL版本为WSL 2</p>
+                        <p class="q-ma-md">将某个WSL实例设置为默认WSL实例</p>
+                        <p class="q-ma-md">在用户的主目录中启动WSL实例</p>
+                        <p class="q-ma-md">将WSL环境更新到最新版本</p>
+                        <p class="q-ma-md">检查WSL环境状态</p>
+                        <p class="q-ma-md">WSL帮助</p>
+                        <p class="q-ma-md">关闭所有WSL实例</p>
+                        <p class="q-ma-md">关闭指定WSL实例</p>
+                        <p class="q-ma-md">将WSL实例导出为WSL镜像</p>
+                        <p class="q-ma-md">将WSL镜像导入为WSL实例</p>
+                        <p class="q-ma-md">将vhdx镜像导入为WSL实例</p>
+                        <p class="q-ma-md">卸载WSL实例</p>
+                        <p class="q-ma-md">装载磁盘或设备</p>
+                        <p class="q-ma-md">卸载磁盘</p>
+                        <p class="q-ma-md">已弃用的WSL命令</p>
+                        <p class="q-ma-md">已弃用的WSL命令</p>
+                        <p class="q-ma-md">已弃用的WSL命令</p>
+                        <q-img src="pic/common_wsl_miscs.png" spinner-color="white"
+                            style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">点击最小化按钮即可最小化窗口，如图所示：</div>
+                        <q-img src="pic/minimize.png" spinner-color="white" style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">点击最大化/还原按钮即可最大化/还原窗口，如图所示：</div>
+                        <q-img src="pic/maximize.png" spinner-color="white" style="width: 100%; height: auto;"></q-img>
+                        <div class="text-h5 q-ma-md text-red-10">点击关闭按钮即可退出程序，如图所示：</div>
+                        <q-img src="pic/close.png" spinner-color="white" style="width: 100%; height: auto;"></q-img>
+                        <q-separator></q-separator>
+                        <div id="development_environment" class="title1 q-ma-md text-primary">开发环境</div>
+                        <div class="text-h5 q-ma-md text-red-10">此软件要求Node版本大于等于22。</div>
+                        <div class="text-h5 q-ma-md text-red-10">准备开发环境，代码如下：</div>
+                        <p class="q-ma-md">$ npm i</p>
+                        <div class="text-h5 q-ma-md text-red-10">调试代码如下：</div>
+                        <p class="q-ma-md">$ npm start</p>
+                        <div class="text-h5 q-ma-md text-red-10">打包代码如下：</div>
+                        <p class="q-ma-md">$ npm run build</p>
+                        <div class="text-h5 q-ma-md text-red-10">打包前要关闭占用8080端口的所有程序，否则将打包失败。</div>
+                        <q-separator></q-separator>
+                        <div id="dependencies" class="title1 q-ma-md text-primary">依赖库</div>
+                        <p class="q-ma-md">electron</p>
+                        <p class="q-ma-md">electron-builder</p>
+                        <p class="q-ma-md">axios</p>
+                        <p class="q-ma-md">winston</p>
+                        <q-separator></q-separator>
+                        <div id="references" class="title1 q-ma-md text-primary">引用fedora-wsl-manager</div>
+                        <div class="text-h5 q-ma-md text-red-10">如果你在学术研究中涉及fedora-wsl-manager，那么可以按需引用以下内容。</div>
+                        <div class="text-h5 q-ma-md text-red-10">fedora-wsl-manager源码(BibTeX)</div>
+                        <p class="q-ma-md">@misc{CNOCTAVE2024,
+                            author = {Yu Hongbo, },
+                            title = {fedora-wsl-manager},
+                            year = {2024},
+                            howpublished = {\url{https://github.com/CNOCTAVE/fedora-wsl-manager}},
+                            }</p>
+                        <div class="text-h5 q-ma-md text-red-10">fedora-wsl-manager文档(BibTeX)</div>
+                        <p class="q-ma-md">@techreport{CNOCTAVE2024,
+                            author = {Yu Hongbo, },
+                            title = {fedora-wsl-manager Document},
+                            institution = {BA DU XIN SHANG},
+                            year = {2024},
+                            number = {1},
+                            month = {10},
+                            url = {https://cnoctave.github.io/fedora-wsl-manager/index.html},
+                            urldate = {2024-10-07},
+                            }</p>
+                    </div>
+                </div>
+                <q-toolbar class="bg-grey-8 text-white q-my-md shadow-2">
+                    <q-btn-dropdown stretch flat label="版权所有 ©">
+                        <q-list>
+                            <q-item clickable v-close-popup @click="goTo('http://cnoctave.cn')">
+                                <q-item-section>
+                                    <q-item-label>© 2024-2025 CNOCTAVE</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="goTo('https://orcid.org/0009-0007-9436-4161')">
+                                <q-item-section>
+                                    <q-item-label>© 2024-2025 Yu Hongbo</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat
+                        label="此文档受Creative Commons Attribution-NoDerivatives 4.0 International License协议保护。"
+                        @click="goTo('https://creativecommons.org/licenses/by-nd/4.0/')"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat label="下载此文档的源码"
+                        @click="goTo('https://github.com/CNOCTAVE/fedora-wsl-manager')"></q-btn>
+                </q-toolbar>
+            </q-page-container>
+
+        </q-layout>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.17.0/dist/quasar.umd.prod.js"></script>
+    <script>
+
+        const App = {
+            data() {
+                return {
+                    scrollToTop() {
+                        window.scrollTo(0, 0);
+                    },
+                    goTo(target) {
+                        window.open(target, '_blank');
+                    },
+                    goToID(target) {
+                        window.open(target, '_self');
+                    },
+                    leftDrawerOpen: true,
+                };
+            },
+        };
+        const app = Vue.createApp(App);
+
+        app.use(Quasar)
+        app.mount('#q-app')
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,244 @@
+{
+    "name": "fedora-wsl-manager",
+    "contributors": [
+        "Yu Hongbo <yuhongbo@member.fsf.org>",
+        "CNOCTAVE <cnoctave@qq.com>"
+    ],
+    "author": "Yu Hongbo <yuhongbo@member.fsf.org>, CNOCTAVE <cnoctave@qq.com>",
+    "email": "cnoctave@qq.com",
+    "version": "3.0.0",
+    "description": "fedora-wsl-manager is an open source Fedora WSL manager packed by Electron",
+    "bugs": {
+        "url": "https://github.com/CNOCTAVE/fedora-wsl-manager/issues",
+        "email": "cnoctave@qq.com"
+    },
+    "license": "AGPL-3.0-only",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-packager . --all",
+        "build-linux": "electron-builder --linux",
+        "build-win": "electron-builder --win",
+        "build-macos": "electron-builder --mac",
+        "build-mac_universal": "electron-builder --mac --config mac_universal.json",
+        "build-mac_zip": "electron-builder --mac --config mac_zip.json",
+        "build-mac_zip_universal": "electron-builder --mac --config mac_zip_universal.json",
+        "build-mac_7z": "electron-builder --mac --config mac_7z.json",
+        "build-mac_7z_universal": "electron-builder --mac --config mac_7z_universal.json",
+        "build-mac_default": "electron-builder --mac --config mac_default.json",
+        "build-mac_default_universal": "electron-builder --mac --config mac_default_universal.json",
+        "build-mac_dmg": "electron-builder --mac --config mac_dmg.json",
+        "build-mac_dmg_universal": "electron-builder --mac --config mac_dmg_universal.json",
+        "build-mac_pkg_arm64": "electron-builder --mac --config mac_pkg_arm64.json",
+        "build-mac_pkg_x64": "electron-builder --mac --config mac_pkg_x64.json",
+        "build-mac_pkg_universal": "electron-builder --mac --config mac_pkg_universal.json",
+        "build-win_appx_arm64": "electron-builder --win --config win_appx_arm64.json",
+        "build-win_appx_ia32": "electron-builder --win --config win_appx_ia32.json",
+        "build-win_appx_x64": "electron-builder --win --config win_appx_x64.json",
+        "build-win_dir_arm64": "electron-builder --win --config win_dir_arm64.json",
+        "build-win_dir_ia32": "electron-builder --win --config win_dir_ia32.json",
+        "build-win_dir_x64": "electron-builder --win --config win_dir_x64.json",
+        "build-win_lz_arm64": "electron-builder --win --config win_lz_arm64.json",
+        "build-win_lz_ia32": "electron-builder --win --config win_lz_ia32.json",
+        "build-win_lz_x64": "electron-builder --win --config win_lz_x64.json",
+        "build-win_nsis_exe_arm64": "electron-builder --win --config win_nsis_exe_arm64.json",
+        "build-win_nsis_exe_ia32": "electron-builder --win --config win_nsis_exe_ia32.json",
+        "build-win_nsis_exe_x64": "electron-builder --win --config win_nsis_exe_x64.json",
+        "build-win_nsis_portable_arm64": "electron-builder --win --config win_nsis_portable_arm64.json",
+        "build-win_nsis_portable_ia32": "electron-builder --win --config win_nsis_portable_ia32.json",
+        "build-win_nsis_portable_x64": "electron-builder --win --config win_nsis_portable_x64.json",
+        "build-win_nsis_web_arm64": "electron-builder --win --config win_nsis_web_arm64.json",
+        "build-win_nsis_web_ia32": "electron-builder --win --config win_nsis_web_ia32.json",
+        "build-win_nsis_web_x64": "electron-builder --win --config win_nsis_web_x64.json",
+        "build-win_portable_arm64": "electron-builder --win --config win_portable_arm64.json",
+        "build-win_portable_ia32": "electron-builder --win --config win_portable_ia32.json",
+        "build-win_portable_x64": "electron-builder --win --config win_portable_x64.json",
+        "build-win_squirrel": "electron-builder --win --config win_squirrel.json",
+        "build-linux_apk": "electron-builder --linux --config linux_apk.json",
+        "build-linux_AppImage": "electron-builder --linux --config linux_AppImage.json",
+        "build-linux_deb": "electron-builder --linux --config linux_deb.json",
+        "build-linux_flatpak": "electron-builder --linux --config linux_flatpak.json",
+        "build-linux_freebsd": "electron-builder --linux --config linux_freebsd.json",
+        "build-linux_pacman": "electron-builder --linux --config linux_pacman.json",
+        "build-linux_rpm": "electron-builder --linux --config linux_rpm.json",
+        "dist": "electron-builder --publish"
+    },
+    "build": {
+        "appId": "cn.cnoctave.fedora-wsl-manager",
+        "productName": "fedora-wsl-manager",
+        "buildNumber": "2.2.0",
+        "icon": "logo.png",
+        "directories": {
+            "output": "dist"
+        },
+        "publish": [
+            {
+                "provider": "github",
+                "owner": "CNOCTAVE",
+                "repo": "fedora-wsl-manager",
+                "releaseType": "release"
+            }
+        ],
+        "win": {
+            "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+            "target": [
+                {
+                    "target": "msi",
+                    "arch": [
+                        "x64",
+                        "ia32",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "7z",
+                    "arch": [
+                        "x64",
+                        "ia32",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "zip",
+                    "arch": [
+                        "x64",
+                        "ia32",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.xz",
+                    "arch": [
+                        "x64",
+                        "ia32",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.gz",
+                    "arch": [
+                        "x64",
+                        "ia32",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.bz2",
+                    "arch": [
+                        "x64",
+                        "ia32",
+                        "arm64"
+                    ]
+                }
+            ]
+        },
+        "mac": {
+            "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+            "target": [
+                {
+                    "target": "tar.xz",
+                    "arch": [
+                        "x64",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.lz",
+                    "arch": [
+                        "x64",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.gz",
+                    "arch": [
+                        "x64",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.bz2",
+                    "arch": [
+                        "x64",
+                        "arm64"
+                    ]
+                }
+            ]
+        },
+        "linux": {
+            "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+            "target": [
+                {
+                    "target": "snap",
+                    "arch": [
+                        "x64",
+                        "armv7l",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "7z",
+                    "arch": [
+                        "x64",
+                        "armv7l",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "zip",
+                    "arch": [
+                        "x64",
+                        "armv7l",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.xz",
+                    "arch": [
+                        "x64",
+                        "armv7l",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.lz",
+                    "arch": [
+                        "x64",
+                        "armv7l",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.gz",
+                    "arch": [
+                        "x64",
+                        "armv7l",
+                        "arm64"
+                    ]
+                },
+                {
+                    "target": "tar.bz2",
+                    "arch": [
+                        "x64",
+                        "armv7l",
+                        "arm64"
+                    ]
+                }
+            ]
+        }
+    },
+    "devDependencies": {
+        "electron": "^33.3.0",
+        "electron-builder": "^25.1.8",
+        "axios": "^1.7.9",
+        "winston": "^3.15.0"
+    },
+    "dependencies": {
+        "axios": "^1.7.9",
+        "winston": "^3.15.0"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
+    }
+}

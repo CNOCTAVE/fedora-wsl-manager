@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<!-- fedora-wsl-manager is an open source Fedora WSL manager packed by electron
+Copyright (C) 2024-2025  Yu Hongbo, CNOCTAVE
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
+<html>
+
+<head>
+    <title>Markdown Reader</title>
+    <link href="github-markdown.css" rel="stylesheet" type="text/css">
+    <link href="MaterialIcons.css" rel="stylesheet" type="text/css">
+    <link href="fontawesome/fontawesome5.css" rel="stylesheet" type="text/css">
+    <link href="fontawesome/fontawesome6.css" rel="stylesheet" type="text/css">
+    <link href="animate.css" rel="stylesheet" type="text/css">
+    <link href="quasar.css" rel="stylesheet" type="text/css">
+    <link href="main.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div id="q-app">
+        <q-layout view="hHh LpR fFf">
+            <q-header elevated class="bg-primary text-white">
+                <q-toolbar class="bg-primary text-white q-ny-md shadow-2">
+                    <q-btn-dropdown stretch flat label="导航" icon="list">
+                        <q-list class="text-black">
+                            <q-item clickable v-close-popup @click="goToID('index.html')">
+                                <q-item-section>
+                                    <q-item-label>已安装的WSL</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="goToID('avaliable_fedora_wsl.html')">
+                                <q-item-section>
+                                    <q-item-label>可用的Fedora WSL版本</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="goToID('manual_install.html')">
+                                <q-item-section>
+                                    <q-item-label>手动安装WSL</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="goToID('common_wsl_miscs.html')">
+                                <q-item-section>
+                                    <q-item-label>常用WSL命令</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
+                    <q-separator dark vertical></q-separator>
+                    <q-space></q-space>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat icon="minimize" label="最小化" id="minimize" @click="minimize"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat icon="fa-regular fa-window-maximize" label="最大化/还原" id="maximize"
+                        @click="maximize"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat icon="close" label="关闭" id="close" @click="close"></q-btn>
+                </q-toolbar>
+            </q-header>
+            <q-page-container>
+                <div>
+                    <h1>常用WSL命令</h1>
+                    <div v-for="(v, k) in miscs" :key="k">
+                        <p>{{v.name}}</p>
+                        <q-input class="bg-blue-grey-10" input-class="text-blue-grey-2" color="grey-3"
+                            label-color="orange" outlined readonly v-model="v.misc">
+                            <template v-slot:append>
+                                <q-btn :class="v.btn_class" stretch flat :icon="v.icon" label=""
+                                    @click="copyMiscToClipboard(k)"></q-btn>
+                            </template>
+                        </q-input>
+                        <div>&nbsp;</div>
+                    </div>
+                </div>
+            </q-page-container>
+        </q-layout>
+    </div>
+    <script src="renderer.js"></script>
+    <script src="vue.js"></script>
+    <script src="quasar.js"></script>
+    <script>
+        const App = {
+            data() {
+                return {
+                    refreshAvaliableFedoraWslListState: false,
+                    isMaximized: false,
+                    maximizeText: "最大化",
+                    miscs: [
+                        {
+                            'name': '在线安装默认的Ubuntu WSL',
+                            'misc': 'wsl --install',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '列出可在线安装的WSL Linux发行版',
+                            'misc': 'wsl --list --online',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '列出全部WSL实例',
+                            'misc': 'wsl --list --verbose',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '将WSL实例版本设置为WSL 1',
+                            'misc': 'wsl --set-version <distribution name> 1',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '将WSL实例版本设置为WSL 2',
+                            'misc': 'wsl --set-version <distribution name> 2',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '设置默认WSL版本为WSL 1',
+                            'misc': 'wsl --set-default-version 1',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '设置默认WSL版本为WSL 2',
+                            'misc': 'wsl --set-default-version 2',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '将某个WSL实例设置为默认WSL实例',
+                            'misc': 'wsl --set-default <Distribution Name>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '在用户的主目录中启动WSL实例',
+                            'misc': 'wsl ~',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '将WSL环境更新到最新版本',
+                            'misc': 'wsl --update',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '检查WSL环境状态',
+                            'misc': 'wsl --version',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': 'WSL帮助',
+                            'misc': 'wsl --help',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '关闭所有WSL实例',
+                            'misc': 'wsl --shutdown',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '关闭指定WSL实例',
+                            'misc': 'wsl --terminate <Distribution Name>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '将WSL实例导出为WSL镜像',
+                            'misc': 'wsl --export <Distribution Name> <FileName>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '将WSL镜像导入为WSL实例',
+                            'misc': 'wsl --import <Distribution Name> <InstallLocation> <FileName>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '将vhdx镜像导入为WSL实例',
+                            'misc': 'wsl --import-in-place <Distribution Name> <FileName>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '卸载WSL实例',
+                            'misc': 'wsl --unregister <DistributionName>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '装载磁盘或设备',
+                            'misc': 'wsl --mount <DiskPath>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '卸载磁盘',
+                            'misc': 'wsl --unmount <DiskPath>',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '已弃用的WSL命令',
+                            'misc': 'wslconfig.exe [Argument] [Options]',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '已弃用的WSL命令',
+                            'misc': 'bash [Options]',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '已弃用的WSL命令',
+                            'misc': 'lxrun /[Argument]',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                    ],
+                    minimize() {
+                        this.sendActionToMain('minimize');
+                    },
+                    maximize() {
+                        if (this.isMaximized) {
+                            this.maximizeText = "还原";
+                        }
+                        else {
+                            this.maximizeText = "最大化";
+                        }
+                        this.isMaximized = !this.isMaximized;
+                        this.sendActionToMain('maximize');
+                    },
+                    close() {
+                        this.sendActionToMain('close');
+                    },
+                    sendActionToMain(action) {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            const id = Date.now()
+                            window.require('electron').ipcRenderer.send('message-from-renderer');
+                            window.require('electron').ipcRenderer.on('message-from-main', (event, arg) => {
+                                event.sender.removeListener('message-from-main', arguments[1])
+                            })
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                    goToID(target) {
+                        window.open(target, '_self');
+                    },
+                    copyMiscToClipboard(k) {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            let msg = { 'k': k, 'v': this.miscs[k].misc };
+                            this.miscs[k].icon = 'check';
+                            this.miscs[k].btn_class = 'bg-green text-white';
+                            window.require('electron').ipcRenderer.send('copy-misc-to-clipboard-start', msg);
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                };
+            },
+            mounted() {
+                if (window.require && window.require('electron').ipcRenderer) {
+                    ipcRenderer.on('copy-misc-to-clipboard-start-complete', (event, msg) => {
+                        let k = msg.k;
+                        this.miscs[k].icon = 'check';
+                        this.miscs[k].btn_class = 'bg-green text-white';
+                        ipcRenderer.send('copy-misc-to-clipboard-stop', msg);
+                    });
+                    ipcRenderer.on('copy-misc-to-clipboard-stop-complete', (event, msg) => {
+                        let k = msg.k;
+                        this.miscs[k].icon = 'content_copy';
+                        this.miscs[k].btn_class = 'bg-blue-grey-2 text-blue-grey-10';
+                    });
+                } else {
+                    console.log('Electron not ready');
+                }
+            }
+        };
+        const app = Vue.createApp(App);
+
+        app.use(Quasar)
+        app.mount('#q-app')
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+{
+    "appId": "cn.cnoctave.fedora-wsl-manager",
+    "productName": "fedora-wsl-manager",
+    "buildNumber": "2.2.0",
+    "icon": "logo.png",
+    "directories": {
+        "output": "dist"
+    },
+    "publish": [
+        {
+        "provider": "github",
+        "owner": "CNOCTAVE",
+        "repo": "fedora-wsl-manager",
+        "releaseType": "release"
+        }
+    ],
+    "win": {
+        "artifactName": "${name}-${version}-${os}-${arch}-appx.${ext}",
+        "target": [
+            {
+                "target": "appx",
+                "arch": [
+                    "x64"
+                ]
+            }
+        ]
+    },
+    "appx": {
+        "applicationId": "marked.reader",
+        "identityName": "marked.reader",
+        "displayName": "Fedora WSL Manager",
+        "languages": ["zh-cn"],
+        "backgroundColor": "transparent",
+        "publisherDisplayName": "***********"
+    }
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<!-- fedora-wsl-manager is an open source Fedora WSL manager packed by electron
+Copyright (C) 2024-2025  Yu Hongbo, CNOCTAVE
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
+
+<html>
+
+<head>
+    <title>Markdown Reader</title>
+    <link href="github-markdown.css" rel="stylesheet" type="text/css">
+    <link href="MaterialIcons.css" rel="stylesheet" type="text/css">
+    <link href="fontawesome/fontawesome5.css" rel="stylesheet" type="text/css">
+    <link href="fontawesome/fontawesome6.css" rel="stylesheet" type="text/css">
+    <link href="animate.css" rel="stylesheet" type="text/css">
+    <link href="quasar.css" rel="stylesheet" type="text/css">
+    <link href="main.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div id="q-app">
+        <q-layout view="hHh LpR fFf">
+            <q-header elevated class="bg-primary text-white">
+                <q-toolbar class="bg-primary text-white q-ny-md shadow-2">
+                    <q-btn-dropdown stretch flat label="导航" icon="list">
+                        <q-list class="text-black">
+                            <q-item clickable v-close-popup @click="goToID('index.html')">
+                                <q-item-section>
+                                    <q-item-label>已安装的WSL</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="goToID('avaliable_fedora_wsl.html')">
+                                <q-item-section>
+                                    <q-item-label>可用的Fedora WSL版本</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="goToID('manual_install.html')">
+                                <q-item-section>
+                                    <q-item-label>手动安装WSL</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                            <q-item clickable v-close-popup @click="goToID('common_wsl_miscs.html')">
+                                <q-item-section>
+                                    <q-item-label>常用WSL命令</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
+                    <q-separator dark vertical></q-separator>
+                    <q-space></q-space>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat icon="minimize" label="最小化" id="minimize" @click="minimize"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat icon="fa-regular fa-window-maximize" label="最大化/还原" id="maximize"
+                        @click="maximize"></q-btn>
+                    <q-separator dark vertical></q-separator>
+                    <q-btn stretch flat icon="close" label="关闭" id="close" @click="close"></q-btn>
+                </q-toolbar>
+            </q-header>
+            <q-page-container>
+                <div>
+                    <h1>已安装的WSL</h1>
+                    <q-btn stretch flat icon="refresh" label="刷新" @click="refreshCurrentWslList"></q-btn>
+                    <q-spinner-ios color="primary" v-show="refreshCurrentWslListState"></q-spinner-ios>
+                    <div></div>
+                    <q-table title="已安装的WSL列表" :rows="rows" :columns="columns" color="dark"
+                        card-class="bg-blue-grey-10 text-blue-grey-2" table-class="bg-blue-grey-10 text-blue-grey-2"
+                        table-header-class="bg-blue-grey-10 text-blue-grey-2" row-key="NAME">
+
+                        <template v-slot:body-cell-options="props">
+                            <q-td :props="props">
+                                <q-btn color="yellow-10" icon-right="send" label="创建桌面快捷方式" no-caps @click="sendDesktopQuickStart(props)"></q-btn>
+                                <q-btn color="primary" icon-right="north" label="升级到WSL2" v-if="props.row.VERSION === '1'" no-caps @click="upgradeWsl(props)"></q-btn>
+                                <q-btn color="green" icon-right="south" label="降级到WSL1" v-else no-caps @click="downgradeWsl(props)"></q-btn>
+                                <q-btn color="red" icon-right="delete" label="删除" no-caps @click="delWsl(props)"></q-btn>
+                            </q-td>
+                        </template>
+                    </q-table>
+                </div>
+            </q-page-container>
+        </q-layout>
+    </div>
+    <script src="renderer.js"></script>
+    <script src="vue.js"></script>
+    <script src="quasar.js"></script>
+    <script>
+        const App = {
+            data() {
+                return {
+                    refreshCurrentWslListState: false,
+                    columns: [
+                        { name: 'NAME', align: 'center', label: 'WSL实例名称', field: 'NAME', sortable: true },
+                        { name: 'STATE', align: 'center', label: 'WSL实例状态', field: 'STATE', sortable: true },
+                        { name: 'VERSION', align: 'center', label: 'WSL版本', field: 'VERSION', sortable: true },
+                        { name: 'launch_misc', align: 'center', label: '启动命令', field: 'launch_misc', sortable: true },
+                        { name: 'options', align: 'center', label: '操作', sortable: true },
+                    ],
+                    rows: [],
+                    isMaximized: false,
+                    maximizeText: "最大化",
+                    minimize() {
+                        this.sendActionToMain('minimize');
+                    },
+                    maximize() {
+                        if (this.isMaximized) {
+                            this.maximizeText = "还原";
+                        }
+                        else {
+                            this.maximizeText = "最大化";
+                        }
+                        this.isMaximized = !this.isMaximized;
+                        this.sendActionToMain('maximize');
+                    },
+                    close() {
+                        this.sendActionToMain('close');
+                    },
+                    sendActionToMain(action) {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            const id = Date.now()
+                            window.require('electron').ipcRenderer.send('message-from-renderer');
+                            window.require('electron').ipcRenderer.on('message-from-main', (event, arg) => {
+                                event.sender.removeListener('message-from-main', arguments[1])
+                            })
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                    goToID(target) {
+                        window.open(target, '_self');
+                    },
+                    refreshCurrentWslList() {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            this.refreshCurrentWslListState = true;
+                            window.require('electron').ipcRenderer.send('refresh-current-wsl-list-start', '');
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                    delWsl(props) {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            this.refreshCurrentWslListState = true;
+                            window.require('electron').ipcRenderer.send('del-wsl-start', props.row.NAME);
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                    sendDesktopQuickStart(props) {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            this.refreshCurrentWslListState = true;
+                            window.require('electron').ipcRenderer.send('send-desktop-quick-start', props.row.NAME);
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                    upgradeWsl(props) {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            this.refreshCurrentWslListState = true;
+                            window.require('electron').ipcRenderer.send('upgrade-wsl-start', props.row.NAME);
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                    downgradeWsl(props) {
+                        if (window.require && window.require('electron').ipcRenderer) {
+                            this.refreshCurrentWslListState = true;
+                            window.require('electron').ipcRenderer.send('downgrade-wsl-start', props.row.NAME);
+                        } else {
+                            console.log('Electron not ready');
+                        }
+                    },
+                };
+            },
+            mounted() {
+                this.refreshCurrentWslList();
+                if (window.require && window.require('electron').ipcRenderer) {
+                    ipcRenderer.on('refresh-current-wsl-list-start-complete', (event, newMessage) => {
+                        this.refreshCurrentWslListState = true;
+                        ipcRenderer.send('refresh-current-wsl-list-stop', newMessage);
+                    });
+                    ipcRenderer.on('refresh-current-wsl-list-stop-complete', (event, newMessage) => {
+                        this.refreshCurrentWslListState = false;
+                        this.rows = JSON.parse(newMessage);
+                    });
+                    ipcRenderer.on('del-wsl-start-complete', (event, newMessage) => {
+                        this.refreshCurrentWslListState = true;
+                        ipcRenderer.send('del-wsl-stop', newMessage);
+                    });
+                    ipcRenderer.on('send-desktop-quick-start-complete', (event, newMessage) => {
+                        this.refreshCurrentWslListState = true;
+                        ipcRenderer.send('send-desktop-quick-stop', newMessage);
+                    });
+                    ipcRenderer.on('send-desktop-quick-stop-complete', (event, newMessage) => {
+                        this.refreshCurrentWslListState = false;
+                    });
+                    ipcRenderer.on('upgrade-wsl-start-complete', (event, newMessage) => {
+                        this.refreshCurrentWslListState = true;
+                        ipcRenderer.send('upgrade-wsl-stop', newMessage);
+                    });
+                    ipcRenderer.on('downgrade-wsl-start-complete', (event, newMessage) => {
+                        this.refreshCurrentWslListState = true;
+                        ipcRenderer.send('downgrade-wsl-stop', newMessage);
+                    });
+                } else {
+                    console.log('Electron not ready');
+                }
+            }
+        };
+        const app = Vue.createApp(App);
+
+        app.use(Quasar)
+        app.mount('#q-app')
+    </script>
+</body>
+
+</html>

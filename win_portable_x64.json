@@ -1,0 +1,28 @@
+{
+    "appId": "cn.cnoctave.fedora-wsl-manager",
+    "productName": "fedora-wsl-manager",
+    "buildNumber": "2.2.0",
+    "icon": "logo.png",
+    "directories": {
+        "output": "dist"
+    },
+    "publish": [
+        {
+        "provider": "github",
+        "owner": "CNOCTAVE",
+        "repo": "fedora-wsl-manager",
+        "releaseType": "release"
+        }
+    ],
+    "win": {
+        "artifactName": "${name}-${version}-${os}-${arch}-portable.${ext}",
+        "target": [
+            {
+                "target": "portable",
+                "arch": [
+                    "x64"
+                ]
+            }
+        ]
+    }
+}
