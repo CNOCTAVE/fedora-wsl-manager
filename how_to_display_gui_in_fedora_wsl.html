@@ -76,23 +76,34 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
             </q-header>
             <q-page-container>
                 <div>
-                    <h1>已安装的WSL</h1>
-                    <q-btn stretch flat icon="refresh" label="刷新" @click="refreshCurrentWslList"></q-btn>
-                    <q-spinner-ios color="primary" v-show="refreshCurrentWslListState"></q-spinner-ios>
-                    <div></div>
-                    <q-table title="已安装的WSL列表" :rows="rows" :columns="columns" color="dark"
-                        card-class="bg-blue-grey-10 text-blue-grey-2" table-class="bg-blue-grey-10 text-blue-grey-2"
-                        table-header-class="bg-blue-grey-10 text-blue-grey-2" row-key="NAME">
-
-                        <template v-slot:body-cell-options="props">
-                            <q-td :props="props">
-                                <q-btn color="yellow-10" icon-right="send" label="创建桌面快捷方式" no-caps @click="sendDesktopQuickStart(props)"></q-btn>
-                                <q-btn color="primary" icon-right="north" label="升级到WSL2" v-if="props.row.VERSION === '1'" no-caps @click="upgradeWsl(props)"></q-btn>
-                                <q-btn color="green" icon-right="south" label="降级到WSL1" v-else no-caps @click="downgradeWsl(props)"></q-btn>
-                                <q-btn color="red" icon-right="delete" label="删除" no-caps @click="delWsl(props)"></q-btn>
-                            </q-td>
-                        </template>
-                    </q-table>
+                    <h1>如何在Fedora WSL中显示GUI</h1>
+                    <div v-for="(v, k) in miscs" :key="k">
+                        <p>{{v.name}}</p>
+                        <q-input class="bg-blue-grey-10" input-class="text-blue-grey-2" color="grey-3"
+                            label-color="orange" outlined readonly v-model="v.misc">
+                            <template v-slot:append>
+                                <q-btn :class="v.btn_class" stretch flat :icon="v.icon" label=""
+                                    @click="copyMiscToClipboard(k)"></q-btn>
+                            </template>
+                        </q-input>
+                        <div>&nbsp;</div>
+                    </div>
+                    <q-separator dark></q-separator>
+                    <p>如果仍然不能显示GUI，那么再安装对应的GUI底座，如</p>
+                    <p>gtk2 gtk3 gtk4 gtk5</p>
+                    <p>plasma-desktop</p>
+                    <p>qt4-qtbase qt5-qtbase qt6-qtbase</p>
+                    <p>mesa-libgbm mesa-libglapi mesa-libEGL mesa-libGL mesa-libGLU mesa-libGLw mesa-libOSMesa mesa-libTeflon mesa-libd3d mesa-libxatracker</p>
+                    <p>即可。一般而言，这些GUI底座会在安装fedora软件源中的GUI软件时自动安装，仅在极少数情况下才需要手动安装。</p>
+                    <q-separator dark></q-separator>
+                    <p>还可以安装桌面主题，美化GUI窗口显示效果，如</p>
+                    <p>breeze-gtk</p>
+                    <p>plasma-breeze</p>
+                    <p>在安装桌面主题后也要重启WSL。</p>
+                    <q-separator dark></q-separator>
+                    <p>在重启WSL后，仍然可能出现类似于</p>
+                    <p>mounting of /mnt/wslg as user runtime dir breaks all users except that with uid=1000</p>
+                    <p>的报错，但GUI窗口已经可以正常显示了。</p>
                 </div>
             </q-page-container>
         </q-layout>
@@ -104,17 +115,47 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
         const App = {
             data() {
                 return {
-                    refreshCurrentWslListState: false,
-                    columns: [
-                        { name: 'NAME', align: 'center', label: 'WSL实例名称', field: 'NAME', sortable: true },
-                        { name: 'STATE', align: 'center', label: 'WSL实例状态', field: 'STATE', sortable: true },
-                        { name: 'VERSION', align: 'center', label: 'WSL版本', field: 'VERSION', sortable: true },
-                        { name: 'launch_misc', align: 'center', label: '启动命令', field: 'launch_misc', sortable: true },
-                        { name: 'options', align: 'center', label: '操作', sortable: true },
-                    ],
-                    rows: [],
+                    refreshAvaliableFedoraWslListState: false,
                     isMaximized: false,
                     maximizeText: "最大化",
+                    miscs: [
+                        {
+                            'name': '如果你的电脑正在使用AMD显卡，那么需要安装AMD显卡驱动',
+                            'misc': 'dnf install mesa-vulkan-drivers',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '如果你的电脑正在使用Intel显卡，那么需要安装Intel显卡驱动',
+                            'misc': 'dnf install mesa-vulkan-drivers intel-mediasdk intel-vpl-gpu-rt',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '如果你的电脑正在使用Nvidia显卡，那么需要先安装rpmfusion-nonfree软件源，再安装Nvidia显卡驱动，可选安装CUDA驱动',
+                            'misc': 'dnf install xorg-x11-drv-nvidia*',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '使用xhost命令允许root用户访问X server',
+                            'misc': 'xhost +local:root',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '重启WSL',
+                            'misc': 'wsl --shutdown',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                        {
+                            'name': '重启WSL',
+                            'misc': 'wsl -d fedora',
+                            'icon': 'content_copy',
+                            'btn_class': 'bg-blue-grey-2 text-blue-grey-10',
+                        },
+                    ],
                     minimize() {
                         this.sendActionToMain('minimize');
                     },
@@ -145,42 +186,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
                     goToID(target) {
                         window.open(target, '_self');
                     },
-                    refreshCurrentWslList() {
+                    copyMiscToClipboard(k) {
                         if (window.require && window.require('electron').ipcRenderer) {
-                            this.refreshCurrentWslListState = true;
-                            window.require('electron').ipcRenderer.send('refresh-current-wsl-list-start', '');
-                        } else {
-                            console.log('Electron not ready');
-                        }
-                    },
-                    delWsl(props) {
-                        if (window.require && window.require('electron').ipcRenderer) {
-                            this.refreshCurrentWslListState = true;
-                            window.require('electron').ipcRenderer.send('del-wsl-start', props.row.NAME);
-                        } else {
-                            console.log('Electron not ready');
-                        }
-                    },
-                    sendDesktopQuickStart(props) {
-                        if (window.require && window.require('electron').ipcRenderer) {
-                            this.refreshCurrentWslListState = true;
-                            window.require('electron').ipcRenderer.send('send-desktop-quick-start', props.row.NAME);
-                        } else {
-                            console.log('Electron not ready');
-                        }
-                    },
-                    upgradeWsl(props) {
-                        if (window.require && window.require('electron').ipcRenderer) {
-                            this.refreshCurrentWslListState = true;
-                            window.require('electron').ipcRenderer.send('upgrade-wsl-start', props.row.NAME);
-                        } else {
-                            console.log('Electron not ready');
-                        }
-                    },
-                    downgradeWsl(props) {
-                        if (window.require && window.require('electron').ipcRenderer) {
-                            this.refreshCurrentWslListState = true;
-                            window.require('electron').ipcRenderer.send('downgrade-wsl-start', props.row.NAME);
+                            let msg = { 'k': k, 'v': this.miscs[k].misc };
+                            this.miscs[k].icon = 'check';
+                            this.miscs[k].btn_class = 'bg-green text-white';
+                            window.require('electron').ipcRenderer.send('copy-misc-to-clipboard-start', msg);
                         } else {
                             console.log('Electron not ready');
                         }
@@ -188,34 +199,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>. -->
                 };
             },
             mounted() {
-                this.refreshCurrentWslList();
                 if (window.require && window.require('electron').ipcRenderer) {
-                    ipcRenderer.on('refresh-current-wsl-list-start-complete', (event, newMessage) => {
-                        this.refreshCurrentWslListState = true;
-                        ipcRenderer.send('refresh-current-wsl-list-stop', newMessage);
+                    ipcRenderer.on('copy-misc-to-clipboard-start-complete', (event, msg) => {
+                        let k = msg.k;
+                        this.miscs[k].icon = 'check';
+                        this.miscs[k].btn_class = 'bg-green text-white';
+                        ipcRenderer.send('copy-misc-to-clipboard-stop', msg);
                     });
-                    ipcRenderer.on('refresh-current-wsl-list-stop-complete', (event, newMessage) => {
-                        this.refreshCurrentWslListState = false;
-                        this.rows = JSON.parse(newMessage);
-                    });
-                    ipcRenderer.on('del-wsl-start-complete', (event, newMessage) => {
-                        this.refreshCurrentWslListState = true;
-                        ipcRenderer.send('del-wsl-stop', newMessage);
-                    });
-                    ipcRenderer.on('send-desktop-quick-start-complete', (event, newMessage) => {
-                        this.refreshCurrentWslListState = true;
-                        ipcRenderer.send('send-desktop-quick-stop', newMessage);
-                    });
-                    ipcRenderer.on('send-desktop-quick-stop-complete', (event, newMessage) => {
-                        this.refreshCurrentWslListState = false;
-                    });
-                    ipcRenderer.on('upgrade-wsl-start-complete', (event, newMessage) => {
-                        this.refreshCurrentWslListState = true;
-                        ipcRenderer.send('upgrade-wsl-stop', newMessage);
-                    });
-                    ipcRenderer.on('downgrade-wsl-start-complete', (event, newMessage) => {
-                        this.refreshCurrentWslListState = true;
-                        ipcRenderer.send('downgrade-wsl-stop', newMessage);
+                    ipcRenderer.on('copy-misc-to-clipboard-stop-complete', (event, msg) => {
+                        let k = msg.k;
+                        this.miscs[k].icon = 'content_copy';
+                        this.miscs[k].btn_class = 'bg-blue-grey-2 text-blue-grey-10';
                     });
                 } else {
                     console.log('Electron not ready');

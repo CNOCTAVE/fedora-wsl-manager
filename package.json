@@ -6,7 +6,7 @@
     ],
     "author": "Yu Hongbo <yuhongbo@member.fsf.org>, CNOCTAVE <cnoctave@qq.com>",
     "email": "cnoctave@qq.com",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "description": "fedora-wsl-manager is an open source Fedora WSL manager packed by Electron",
     "bugs": {
         "url": "https://github.com/CNOCTAVE/fedora-wsl-manager/issues",
@@ -66,7 +66,7 @@
     "build": {
         "appId": "cn.cnoctave.fedora-wsl-manager",
         "productName": "fedora-wsl-manager",
-        "buildNumber": "2.2.0",
+        "buildNumber": "3.1.0",
         "icon": "logo.png",
         "directories": {
             "output": "dist"

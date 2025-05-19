@@ -1,7 +1,7 @@
 {
     "appId": "cn.cnoctave.fedora-wsl-manager",
     "productName": "fedora-wsl-manager",
-    "buildNumber": "2.2.0",
+    "buildNumber": "3.1.0",
     "icon": "logo.png",
     "directories": {
         "output": "dist"
@@ -31,7 +31,7 @@
                   "metadata": {
                     "name": "fedora-wsl-manager",
                     "description": "fedora-wsl-manager is an open source Fedora WSL manager packed by Electron",
-                    "version": "3.0.0",
+                    "version": "3.1.0",
                     "com.github.app.url": "http://cnoctave.cn",
                     "com.github.app.license": "AGPL-3.0-only"
                   },
