@@ -1,7 +1,7 @@
 {
     "appId": "cn.cnoctave.fedora-wsl-manager",
     "productName": "fedora-wsl-manager",
-    "buildNumber": "3.1.0",
+    "buildNumber": "4.0.0",
     "icon": "logo.png",
     "directories": {
         "output": "dist"
